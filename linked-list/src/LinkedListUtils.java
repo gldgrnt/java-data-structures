@@ -40,12 +40,14 @@ public class LinkedListUtils {
 		} 
 		// Place somewhere in the middle
 		else { 
+			// Loop through all (except for first and last)
 			for (int i = 1; i < list.size(); i++) {
-				if (list.get(i) == value) {
-					list.add(i, value);
-					break;
-				} else if (list.get(i) < value) {
-					list.add(i + 1, value);
+				int current = list.get(i);
+				// only place if current is less than or equal
+				if (current <= value) {
+					// determine placing index
+					int indexToPlace = current == value ? i : i + 1;
+					list.add(indexToPlace, value);
 					break;
 				}
 			}
