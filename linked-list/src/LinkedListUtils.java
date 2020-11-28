@@ -64,10 +64,43 @@ public class LinkedListUtils {
      * their order must not be changed.
      */
 	public static void removeMaximumValues(LinkedList<String> list, int N) {
-
-		/* IMPLEMENT THIS METHOD! */
-
+		// Handle base cases: list = null & N < 1 & empty list
+		if (list == null || N <  1 || list.isEmpty()) {
+			return;
+		}
+		
+		// Return a cleared list if we want to remove more items than there are in the list
+		if (N >= list.size()) {
+			list.clear();
+			return;
+		}
+		
+		// Create currentLargest value placeholder and i for loop count
+		String currentLargest = null; 
+		int i = 0;
+		
+		// Loop through and remove N largest items
+		while (i < N) {
+			// Loop through once to find the currentLargest String value
+			for (int j = 0; j < list.size(); j++) {
+				if (currentLargest == null || list.get(j).length() > currentLargest.length()) {
+					currentLargest = list.get(j);
+				}
+			}
+			
+			// Remove all occurrences of that string 
+			while (list.indexOf(currentLargest) != -1) {
+				list.remove(currentLargest);
+			}
+			
+			// Set currentLargest back to null once all occurrences are removed
+			currentLargest = null;
+			
+			// Increment i
+			i++;
+		}
 	}
+
     
     /**
      * This method determines whether any part of the first LinkedList contains all elements of the second in 
