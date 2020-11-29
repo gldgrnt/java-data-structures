@@ -4,11 +4,8 @@ import java.util.LinkedList;
  * SD2x Homework #1
  * Implement the methods below according to the specification in the assignment description.
  * Please be sure not to change the signature of any of the methods!
- * 
- * run:
- * 1: javac LinkListUtils.class
- * 2: java -cp .:junit-dist.jar:homework1-tests.jar Homework1Grader
  */
+
 
 public class LinkedListUtils {
 
@@ -109,9 +106,32 @@ public class LinkedListUtils {
      * if either input is null or empty.
      */
 	public static boolean containsSubsequence(LinkedList<Integer> one, LinkedList<Integer> two) {
+		// Handle base cases: either list isEmpty or null
+		if (one == null || one.isEmpty() || two == null || two.isEmpty()) {
+			return false;
+		}
 
-		/* IMPLEMENT THIS METHOD! */
+		// Loop through one and check for sub list
+		boolean found = false;
+		int twoPointer = 0;
 		
-		return true; // this line is here only so this code will compile if you don't modify it
+		for (int i = 0; i < one.size(); i++) {		
+			// Skip to next element in one and reset twoPointer
+			if (one.get(i) != two.get(twoPointer)) {
+				twoPointer = 0;
+				continue;
+			}
+			
+			// Move two's pointer to the next element to check
+			twoPointer++;
+			
+			// Break out of loop if sequence has been found
+			if (twoPointer >= two.size()) {
+				found = true;
+				break;
+			}
+		}
+		
+		return found;
 	}
 }
