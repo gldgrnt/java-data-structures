@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -70,13 +71,12 @@ public class Analyzer {
 		}
 		
 
-		/* IMPLEMENT THIS METHOD! */
-		return result; // this line is here only so this code will compile if you don't modify it
+		// Return result list
+		return result;
 
 	}
 	
-	// Helper function to try parsing an integer
-	// (so as not to nest try catch blocks)
+	// Helper function to try parsing an integer (so as not to nest try catch blocks)
 	private static int tryParseInt (String string) {
 		try {
 			return Integer.parseInt(string);
@@ -86,14 +86,82 @@ public class Analyzer {
 		}
 	}
 	
+	
 	/*
 	 * Implement this method in Part 2
-	 */
+	 * 
+	 * This method should find all of the individual tokens/words in the text field of each 
+	 * Sentence in the List and create Word objects for each distinct word. The Word objects 
+	 * should keep track of the number of occurrences of that word in all Sentences, and the 
+	 * total cumulative score of all Sentences in which it appears. This method should then 
+	 * return a Set of those Word objects.
+	 * 
+	 * If the input List of Sentences is null or is empty, the allWords method should return an empty Set.
+	 * 
+	 * If a Sentence object in the input List is null, this method should ignore it and process the non-null Sentences.
+	 */ 
 	public static Set<Word> allWords(List<Sentence> sentences) {
-
-		/* IMPLEMENT THIS METHOD! */
+		Set<Word> result = new HashSet<Word>();
 		
-		return null; // this line is here only so this code will compile if you don't modify it
+		// Handle base cases: null or empty list => empty set
+		if (sentences == null || sentences.isEmpty()) {
+			return result;
+		}
+		
+		// Create holder array for all Word objects
+		ArrayList<Word> wordsHolder = new ArrayList<Word>();
+		
+		// Loop through each sentence and add each word to the holder
+		for (Sentence current : sentences) {
+			
+			if (current == null) {
+				continue;
+			}
+			
+			// Split up all the words
+			String[] words = current.getText().split(" ");
+			
+			for (String word : words) {
+				word = word.toLowerCase();
+				
+				// Filter out badly formatted words 
+				if (!word.matches("(^[a-z])([a-z]*)")) {
+					continue;
+				}
+				
+				// Create new instance of word, update the value & add to holding array
+				Word newWord = new Word(word);
+				newWord.increaseTotal(current.score);
+				wordsHolder.add(newWord);
+			}
+		}
+		
+		// Check if any words have been added to the holding array
+		if (wordsHolder.isEmpty()) {
+			return result;
+		}
+		
+		// Loop through holding array and add each distinct word to the result
+		while (!wordsHolder.isEmpty()) {
+			Word currentWord = wordsHolder.get(0);
+			
+			// Make sure holding array is long enough 
+			if (wordsHolder.size() > 1) {
+				for (int i = 1; i < wordsHolder.size(); i++) {
+					if (currentWord.getText() == wordsHolder.get(i).getText()) {
+						currentWord.increaseTotal(wordsHolder.get(i).getTotal());
+						// Remove matching words from the holding array
+						wordsHolder.remove(i);
+					}
+				}
+			}
+			
+			// Add to results set and remove from holding array
+			result.add(currentWord);
+			wordsHolder.remove(0);
+		}
+		
+		return result;
 
 	}
 	
@@ -124,6 +192,6 @@ public class Analyzer {
 	 * You may modify it as needed.
 	 */
 	public static void main(String[] args) {
-		readFile("./test6.txt");
+		allWords(readFile("./test6.txt"));
 	}
 }
