@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -96,17 +97,17 @@ public class Analyzer {
 	 * total cumulative score of all Sentences in which it appears. This method should then 
 	 * return a Set of those Word objects.
 	 * 
-	 * If the input List of Sentences is null or is empty, the allWords method should return an empty Set.
+	 * If the input List of Sentences is null or is empty, the allWords method should return an 
+	 * empty Set.
 	 * 
-	 * If a Sentence object in the input List is null, this method should ignore it and process the non-null Sentences.
+	 * If a Sentence object in the input List is null, this method should ignore it and process 
+	 * the non-null Sentences.
 	 */ 
 	public static Set<Word> allWords(List<Sentence> sentences) {
 		Set<Word> result = new HashSet<Word>();
 		
 		// Handle base cases: null or empty list => empty set
-		if (sentences == null || sentences.isEmpty()) {
-			return result;
-		}
+		if (sentences == null || sentences.isEmpty()) return result;
 		
 		// Create holder array for all Word objects
 		ArrayList<Word> wordsHolder = new ArrayList<Word>();
@@ -114,9 +115,7 @@ public class Analyzer {
 		// Loop through each sentence and add each word to the holder
 		for (Sentence current : sentences) {
 			
-			if (current == null) {
-				continue;
-			}
+			if (current == null) continue;
 			
 			// Split up all the words
 			String[] words = current.getText().split(" ");
@@ -125,9 +124,7 @@ public class Analyzer {
 				word = word.toLowerCase();
 				
 				// Filter out badly formatted words 
-				if (!word.matches("(^[a-z])([a-z]*)")) {
-					continue;
-				}
+				if (!word.matches("^[a-z]+")) continue;
 				
 				// Create new instance of word, update the value & add to holding array
 				Word newWord = new Word(word);
@@ -137,9 +134,7 @@ public class Analyzer {
 		}
 		
 		// Check if any words have been added to the holding array
-		if (wordsHolder.isEmpty()) {
-			return result;
-		}
+		if (wordsHolder.isEmpty()) return result;
 		
 		// Loop through holding array and add each distinct word to the result
 		while (!wordsHolder.isEmpty()) {
@@ -165,30 +160,91 @@ public class Analyzer {
 
 	}
 	
+
 	/*
-	 * Implement this method in Part 3
+	 * This method should iterate over each Word in the input Set, use the Word’s calculateScore 
+	 * method to get the average sentiment score for that Word, and then place the text of 
+	 * the Word (as key) and calculated score (as value) in a Map.
+	 * 
+	 * If the input Set of Words is null or is empty, the calculateScores method should return 
+	 * an empty Map.
+	 * 
+	 * If a Word object in the input Set is null, this method should ignore it and process the
+	 * non-null Words.
 	 */
+	
 	public static Map<String, Double> calculateScores(Set<Word> words) {
-
-		/* IMPLEMENT THIS METHOD! */
+		Map<String, Double> result = new HashMap<String, Double>();
+		// Handle base cases
+		if (words == null || words.isEmpty()) return result;
 		
-		return null; // this line is here only so this code will compile if you don't modify it
+		for (Word word : words) {
+			// Skip null or empty words
+			if (word == null) continue;
+			
+			// Handle non-null words
+			String text = word.getText();
+			Double score = word.calculateScore();
+			
+			result.put(text, score);
+		}
+		
+		return result; // this line is here only so this code will compile if you don't modify it
 
 	}
 	
+	
 	/*
-	 * Implement this method in Part 4
+	 * This method should use the Map to calculate and return the average score of all the words in 
+	 * the input sentence.
+	 * 
+	 * Note that you will need to tokenize/split the sentence, as you did in Part 2.
+	 * 
+	 * If a word in the sentence does not start with a letter, then you can ignore it, but if it starts 
+	 * with a letter and is not present in the Map, assign it a score of 0.
+	 * 
+	 * You may assume that all words in the Map consist only of lowercase letters (since this would have 
+	 * been done in previous steps) but do not assume that all words in the input sentence consist only 
+	 * of lowercase letters; you should convert them to lowercase before checking whether they’re contained 
+	 * in the Map.
+	 * 
+	 * If the input Map is null or empty, or if the input sentence is null or empty or does not contain 
+	 * any valid words, this method should return 0.
 	 */
+	
 	public static double calculateSentenceScore(Map<String, Double> wordScores, String sentence) {
-
-		/* IMPLEMENT THIS METHOD! */
+		double score = 0;
 		
-		return 0; // this line is here only so this code will compile if you don't modify it
-
+		// Handle base cases
+		if (wordScores == null || wordScores.isEmpty()) return score;
+		if (sentence == null || sentence.isEmpty()) return score;
+		
+		// Initialise counter and split sentence up by space
+		int count = 0;
+		String[] words = sentence.split(" ");
+		
+		for (String word : words) {
+			double wordScore = 0;
+			word = word.toLowerCase();
+			
+			// Check if word starts with a lower case letter
+			if (!word.matches("^[a-z]+")) continue;
+			
+			// Get word score
+			if (wordScores.containsKey(word)) {
+				wordScore = wordScores.get(word);
+			}
+				
+			score = score + wordScore;
+			count++;
+		}
+		
+		// Calculate average
+		return score > 0 ? score / count : 0;
 	}
 	
 	/*
-	 * This method is here to help you run your program. Y
+	 * This method is here to help you run your program.
 	 * You may modify it as needed.
 	 */
 	public static void main(String[] args) {
