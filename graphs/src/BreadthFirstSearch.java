@@ -70,7 +70,7 @@ public class BreadthFirstSearch {
 				if (!marked.contains(neighbor)) {
 					// Increment count when at least 1 neighbour has been added to the marked list
 					if (!countAdded) {
-						count = count + 1;
+						count++;
 						countAdded = true;
 					}
 					// Break once element is found
@@ -84,5 +84,44 @@ public class BreadthFirstSearch {
 		}
 		// If the code reaches this point, the nodes are not connected and we return -1 
 		return -1;
+	}
+	
+	/*
+	 * bfs but for counting up to a max number of neighbours
+	 */
+	public Set<String> bfsMaxDistance(Node start, int maxDistance) {
+		if (!graph.containsNode(start) || maxDistance < 1) {
+			return null;
+		}
+		HashSet<String> result = new HashSet<String>();
+		int distance = 0;
+		Queue<Node> toExplore = new LinkedList<Node>();
+		marked.add(start);
+		toExplore.add(start);
+		while (!toExplore.isEmpty()) {
+			// Check how many edges we've gone down
+			if (distance >= maxDistance) {
+				break;
+			}
+			Node current = toExplore.remove();
+			boolean countAdded = false;
+			for (Node neighbor : graph.getNodeNeighbors(current)) {
+				if (!marked.contains(neighbor)) {
+					// Increment count when at least 1 neighbour has been added to the marked list
+					if (!countAdded) {
+						distance++;
+						countAdded = true;
+					}
+					marked.add(neighbor);
+					toExplore.add(neighbor);
+				}
+			}
+		}
+		// Map nodes in marked hashSet to a hashSet of strings
+		marked.remove(start);
+		for(Node element : marked) {
+			result.add(element.getElement());
+		}
+		return result;
 	}
 }
