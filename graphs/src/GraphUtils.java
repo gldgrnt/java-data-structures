@@ -2,6 +2,7 @@
 
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 /*
  * SD2x Homework #6
@@ -68,10 +69,30 @@ public class GraphUtils {
 	 * false if the input Graph or List is null.
 	 */
 	public static boolean isHamiltonianPath(Graph g, List<String> values) {
-		// Handle base cases
+		// Handle base cases + HP characteristics
 		if (g == null || values == null || values.isEmpty()) return false;
-		
-		return true; // this line is here only so this code will compile if you don't modify it
+		if (values.get(0) != values.get(values.size() - 1)) return false;
+		if (values.size() != g.numNodes + 1) return false;
+		// Check the path via following the list of values
+		int currIndex = 0;
+		Set<Node> visited = new HashSet<Node>();
+		while(currIndex + 1 < values.size()) {
+			BreadthFirstSearch search = new BreadthFirstSearch(g);
+			// Handle base cases
+			if (!g.containsElement(values.get(currIndex))) return false;
+			if (!g.containsElement(values.get(currIndex + 1))) return false;
+			// Create nodes
+			Node node1 = g.getNode(values.get(currIndex));
+			Node node2 = g.getNode(values.get(currIndex + 1));
+			// If next value isn't along an edge, then path is not Hamiltonian
+			boolean edgeExistsBetweenNodes = search.bfsMaxDistance(node1, 1).contains(node2.getElement());
+			if (!edgeExistsBetweenNodes) return false;
+			// Add node2 to visited list
+			visited.add(node2); // (we can miss the first as it's the same as the last)
+			currIndex++;
+		}
+		// Check that all nodes were visited
+		return visited.containsAll(g.getAllNodes());
 	}
 	
 }
