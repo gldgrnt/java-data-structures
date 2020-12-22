@@ -24,30 +24,53 @@ public class DataTier {
 	 * Book objects for each, and then return the Book objects. 
 	 * Format of each line in file: [title][tab][author][tab][year] 
 	 */
+//	public List<Book> getAllBooks() {
+//		ArrayList<Book> result = new ArrayList<Book>();
+//		// Try reading the file
+//		try {
+//			File textFile = new File(this.fileName);
+//			Scanner scanner = new Scanner(textFile);
+//			while (scanner.hasNextLine()) {
+//				String line = scanner.nextLine();
+//				String[] splitLine = line.split("\t");
+//				if (splitLine.length != 3) continue;
+//				// Create each part of the book object
+//				// It is assumed that the file is formatted properly
+//				String title = splitLine[0];
+//				String author = splitLine[1];
+//				int year = Integer.parseInt(splitLine[2]);
+//				Book book = new Book(title, author, year);
+//				result.add(book);
+//			}
+//			scanner.close();
+//		} catch(FileNotFoundException e) {
+//			System.out.println("File not found");
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
+	
 	public List<Book> getAllBooks() {
-		ArrayList<Book> result = new ArrayList<Book>();
-		// Try reading the file
+		List<Book> bookData = new ArrayList<Book>(); 
+		
 		try {
-			File textFile = new File(this.fileName);
-			Scanner scanner = new Scanner(textFile);
-			while (scanner.hasNextLine()) {
-				String line = scanner.nextLine();
-				String[] splitLine = line.split("\t");
-				if (splitLine.length != 3) continue;
-				// Create each part of the book object
-				// It is assumed that the file is formatted properly
-				String title = splitLine[0];
-				String author = splitLine[1];
-				int year = Integer.parseInt(splitLine[2]);
-				Book book = new Book(title, author, year);
-				result.add(book);
+			Scanner file = new Scanner(new File(fileName));
+			
+			while (file.hasNextLine()) {
+				String[] bookInfo =  file.nextLine().split("\t");
+				// Check that data is formatted properly
+				if (bookInfo.length != 3)
+					continue;
+				String title = bookInfo[0];
+				String author = bookInfo[1];
+				int year = Integer.parseInt(bookInfo[2]);
+				bookData.add(new Book(title, author, year));
 			}
-			scanner.close();
+				
 		} catch(FileNotFoundException e) {
-			System.out.println("File not found");
-			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
-		return result;
+		return bookData;
 	}
 
 }

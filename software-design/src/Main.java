@@ -7,8 +7,8 @@
 public class Main {
 	
 	public static void main(String[] args) {
-		
-		DataTier dt = new DataTier(args[0]);
+		String fileName = args.length == 0 ? new String("books.txt") : args[0];
+		DataTier dt = new DataTier(fileName);
 		LogicTier lt = new LogicTier(dt);
 		PresentationTier pt = new PresentationTier(lt);
 		pt.start();

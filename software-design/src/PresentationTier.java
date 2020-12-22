@@ -11,32 +11,35 @@ import java.util.List;
 public class PresentationTier {
 	
 	private LogicTier logicTier; // link to the Logic Tier
+	private Scanner scanner = new Scanner(System.in);;
 	
 	public PresentationTier(LogicTier logicTier) {
 		this.logicTier = logicTier;
 	}
 	
 	public void start() {
-		String choiceInput = _getUserInput("Choose a mode (with number):\n1:Book titles by author\n2:Number of books in a given year");
+		String choiceInput = _getUserInput("Choose a mode (with number):\n1:Book titles by author\n2:Number of books in a given year\n3:Test");
 		int choice = Integer.parseInt(choiceInput);
 		switch(choice) {
 			case 1:
 				String authorChoice = _getUserInput("Search an author's name:");
 				showBookTitlesByAuthor(authorChoice);
+				break;
 				
 			case 2:
 				int yearChoice = Integer.parseInt(_getUserInput("Search a year:"));
 				showNumberOfBooksInYear(yearChoice);
+				break;
+				
+			case 3:
+				showBookTitles();
 		}
+		scanner.close();
 	}
 	
 	private String _getUserInput(String msg) {
-		String input;
-		Scanner scanner = new Scanner(System.in);
 		System.out.println(msg);
-		input = scanner.nextLine();
-		scanner.close();
-		return input;
+		return scanner.nextLine();
 	}
 	
 	public void showBookTitlesByAuthor(String name) {
@@ -49,5 +52,10 @@ public class PresentationTier {
 	public void showNumberOfBooksInYear(int year) {
 		int numberOfBooks = logicTier.findNumberOfBooksInYear(year);
 		System.out.println(numberOfBooks);
+	}
+	
+	public void showBookTitles() {
+		List<String> titles = logicTier.getAllBookTitles();
+		System.out.println(titles.toString());
 	}
 }

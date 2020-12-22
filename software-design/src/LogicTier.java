@@ -17,45 +17,53 @@ public class LogicTier {
 	}
 	
 	public List<String> findBookTitlesByAuthor(String name) {		
-		List<String> result = new ArrayList<String>();
-		if (name.isBlank() || name.isEmpty() || name == null) return result;
+		List<Book> filteredBooks = new ArrayList<Book>();
+		if (name.isBlank() || name.isEmpty() || name == null) return null;
+		name.toLowerCase();
 		// Filter and sort the retrieved books
-		List<Book> allBooks = _getAllBooks();
+		List<Book> allBooks = getAllBooksFromData();
 		for (Book book : allBooks) {
-			boolean containsName = book.getAuthor().contains(name.toLowerCase());
+			boolean containsName = book.getAuthor().contains(name);
 			// Add to results array
-			if (!containsName) {
-				allBooks.remove(book);
+			if (containsName) {
+				filteredBooks.add(book);
 			}
 		}
-		Collections.sort(allBooks);
-		result = _getBookTitles(allBooks);
-		return result;
+		Collections.sort(filteredBooks);
+		return getTitlesFromBooks(filteredBooks);
 	}
 	
 	public int findNumberOfBooksInYear(int year) {
-		int result = 0;
+		List<Book> filteredBooks = new ArrayList<Book>();
 		String yearString = String.valueOf(year);
-		if (yearString.length() != 4) return result;
+		if (yearString.length() != 4) return 0;
 		// Get and filter books that aren't in the target year
-		List<Book> allBooks = this._getAllBooks();
+		List<Book> allBooks = getAllBooksFromData();
 		for (Book book : allBooks) {
 			boolean isSameYear = book.getPublicationYear() == year;
-			if (!isSameYear) {
-				allBooks.remove(book);
+			if (isSameYear) {
+				filteredBooks.add(book);
 			}
 		}
-		result = allBooks.size();
-		return result;
+		return filteredBooks.size();
 	}
 	
-	private List<Book> _getAllBooks() {
+	public List<String> getAllBookTitles() {
+		List<String> titles = new ArrayList<String>();
+		List<Book> books = dataTier.getAllBooks();
+		for ( Book book : books) {
+			titles.add(book.getTitle());
+		}
+		return titles;
+	}
+	
+	private List<Book> getAllBooksFromData() {
 		List<Book> books = new ArrayList<Book>();
 		books = dataTier.getAllBooks();
 		return books;
 	}
 	
-	private List<String> _getBookTitles(List<Book> books) {
+	private List<String> getTitlesFromBooks(List<Book> books) {
 		List<String> result = new ArrayList<String>();
 		for (Book book : books) {
 			result.add(book.getTitle());
