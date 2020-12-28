@@ -1,20 +1,15 @@
 
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 /*
  * SD2x Homework #11
  * Improve the efficiency of the code below according to the guidelines in the assignment description.
  * Please be sure not to change the signature of the detectPlagiarism method!
  * However, you may modify the signatures of any of the other methods as needed.
+ * 
+ * Goal execution time 40% of the original
  */
 
 public class PlagiarismDetector {
@@ -28,7 +23,10 @@ public class PlagiarismDetector {
 		for (int i = 0; i < files.length; i++) {
 			String file1 = files[i];
 
-			for (int j = 0; j < files.length; j++) { 
+			for (int j = 0; j < files.length; j++) {
+				if (i == j)
+					continue;
+				
 				String file2 = files[j];
 				
 				Set<String> file1Phrases = createPhrases(dirName + "/" + file1, windowSize); 
@@ -64,7 +62,7 @@ public class PlagiarismDetector {
 	protected static List<String> readFile(String filename) {
 		if (filename == null) return null;
 		
-		List<String> words = new LinkedList<String>();
+		List<String> words = new ArrayList<String>();
 		
 		try {
 			Scanner in = new Scanner(new File(filename));
@@ -106,27 +104,18 @@ public class PlagiarismDetector {
 	}
 
 	
-
-	
 	/*
 	 * Returns a Set of Strings that occur in both of the Set parameters.
 	 * However, the comparison is case-insensitive.
 	 */
 	protected static Set<String> findMatches(Set<String> myPhrases, Set<String> yourPhrases) {
-	
-		Set<String> matches = new HashSet<String>();
 		
-		if (myPhrases != null && yourPhrases != null) {
+		if (myPhrases == null || yourPhrases == null)
+			return new HashSet<String>();
 		
-			for (String mine : myPhrases) {
-				for (String yours : yourPhrases) {
-					if (mine.equalsIgnoreCase(yours)) {
-						matches.add(mine);
-					}
-				}
-			}
-		}
-		return matches;
+		myPhrases.retainAll(yourPhrases);
+		
+		return myPhrases;
 	}
 	
 	/*
@@ -168,11 +157,7 @@ public class PlagiarismDetector {
 	 * You do not need to consider it for improving the efficiency of the detectPlagiarism method.
 	 */
     public static void main(String[] args) {
-    	if (args.length == 0) {
-    		System.out.println("Please specify the name of the directory containing the corpus.");
-    		System.exit(0);
-    	}
-    	String directory = args[0];
+    	String directory = "corpus";
     	long start = System.currentTimeMillis();
     	Map<String, Integer> map = PlagiarismDetector.detectPlagiarism(directory, 4, 5);
     	long end = System.currentTimeMillis();
